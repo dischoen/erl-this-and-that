@@ -19,7 +19,6 @@ stop() ->
     getW ! {stop}.
 
 worker(WindowSize, L) ->
-    io:format("st~n"),
     receive
         {set, L1} ->
             worker(WindowSize, L1);
@@ -39,3 +38,17 @@ worker(WindowSize, L) ->
         {stop} ->
             ok
     end.
+
+consumer(WindowSize, Iterations) ->
+    L = getW:get(),
+    if 
+        length(L) =:= WindowSize ->
+           consumer(WindowSize, Iterations + 1);
+        true ->
+           io:format("~p iterations~n", [Iterations])
+    end.
+
+test() ->
+    getW:start(4,lists:seq(1,10000)),
+    consumer(4,0),
+    getW:stop().
