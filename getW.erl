@@ -1,9 +1,11 @@
 -module(getW).
 -compile([export_all]).
 
-start(WindowSize, L) ->
+start(WindowSize, L) when WindowSize =< length(L) ->
     Pid = spawn(?MODULE, worker, [WindowSize, L]),
-    register(getW, Pid).
+    register(getW, Pid);
+start(_, _) ->
+    erlang:throw(list_too_short).
 
 set(L) ->
     getW ! {set, L}.
